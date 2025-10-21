@@ -1,0 +1,36 @@
+[project]
+name = "projet-ml"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "matplotlib>=3.10.7",
+    "torch>=2.9.0",
+]
+
+[tool.ruff]
+# Match your project’s Python version
+target-version = "py313"
+
+# Directories to lint
+src = ["main.py"]
+
+# Ignore common virtual environment / build directories
+exclude = [
+    ".git",
+    ".venv",
+    "__pycache__",
+    "build",
+    "dist",
+]
+
+# Enable a few common rule sets
+lint.select = ["E", "F", "I"]  # E/F = pycodestyle + pyflakes, I = import sorting
+lint.ignore = []
+
+# Auto-fix common issues on save (if using `ruff check --fix`)
+fix = true
+
+# Set line length for style checks
+line-length = 120
