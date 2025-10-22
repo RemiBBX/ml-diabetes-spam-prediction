@@ -12,13 +12,13 @@ validation_size = 0.15
 test_size = 0.15
 
 learning_rate = 0.001
-epochs = 15
+epochs = 10
 
-hidden_size = 50
+hidden_size = 128
 
 
 if __name__ == "__main__":
-    MLP = MLP_nn(input_size=input_size, hidden_size=hidden_size, output_size=1, layer_size=3)
+    MLP = MLP_nn(input_size=input_size, hidden_size=hidden_size, output_size=1, layer_size=2)
 
     # Optimizer: new_parameters = old_parameters - lr*gradient, with lr the learning rate
 
@@ -43,10 +43,11 @@ if __name__ == "__main__":
         shuffle=True,
     )
 
-    counts = torch.count_nonzero(y_train)
-    weights = 1.0 / counts.float()
-    weights = weights / weights.sum()
-    criterion = torch.nn.BCEWithLogitsLoss(weight=weights)
+
+
+    pos = torch.count_nonzero(y_train)
+    zeros = X_train.shape[0] - pos
+    criterion = torch.nn.BCEWithLogitsLoss(pos_weight=zeros/pos)
     optimizer = torch.optim.Adam(MLP.parameters(), lr=learning_rate)
 
     train_model(
@@ -59,7 +60,7 @@ if __name__ == "__main__":
         print_every_epochs=1
     )
 
-    y_predict = MLP.forward(X_test)
+    y_predict = torch.sigmoid(MLP(X_test))
     accu = compute_accuracy(
         y_test_list=y_test,
         y_pred_list=y_predict,

@@ -1,10 +1,9 @@
-import torch
 
 
 def compute_accuracy(y_pred_list, y_test_list):
     acc, false_positive, false_negative = 0, 0, 0
     for y_pred, y_test in zip(y_pred_list, y_test_list):
-        if torch.round(y_pred).detach() == y_test:
+        if (y_pred >= 0.5).int() == y_test:
 
             acc += 1
         else:

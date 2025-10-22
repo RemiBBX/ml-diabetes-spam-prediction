@@ -11,10 +11,11 @@ class Layer:
 
 class MLP_nn(nn.Module):
 
-    def __init__(self, input_size, hidden_size, output_size, layer_size = 3):
+    def __init__(self, input_size, hidden_size, output_size, layer_size = 3, drop_rate = 0.4):
         super(MLP_nn, self).__init__()
         self.relu = nn.ReLU()
         self.sigmoid = nn.Sigmoid()
+        self.dropout = nn.Dropout(drop_rate)
 
         self.layers = nn.ModuleList()
         self.layers.append(nn.Linear(input_size, hidden_size))
@@ -26,6 +27,7 @@ class MLP_nn(nn.Module):
     def forward(self, x):
         for layer in self.layers[:-1]:
             x = self.relu(layer(x))
+        x = self.dropout(x)
 
         return self.layers[-1](x)
 
