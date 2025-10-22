@@ -23,17 +23,16 @@ class PreprocessedData:
 def preprocessing(data, test_size, validation_size) :
     df = pd.read_csv(data)
     df = df.fillna(df.median())                     # gérer les valeurs manquantes
-    df = df.sample(frac=0.01, random_state=42)      # réduit le nombre de ligne pour des tests
 
 
+
+
+    binary_cols = [col for col in df.columns if set(df[col].unique()) <= {0, 1}]
+    continuous_cols = [col for col in df.columns if col not in binary_cols]
+    scaler = StandardScaler()
+    df[continuous_cols] = scaler.fit_transform(df[continuous_cols])
     y = df['Diabetes_binary']
-    X = df.drop(columns=['Diabetes_binary'])
-
-    ## Standardisation avec pd
-    # df = (df - df.mean()) / df.std()
-    # df = (df - df.min()) / (df.max() - df.min())
-    ## Standardisation avec scikit
-    X = StandardScaler().fit_transform(X)           # moyenne nulle et variance unité
+    X = df.drop(columns=['Diabetes_binary']).astype(float)
     y = y.to_numpy().reshape(-1, 1)
 
     X_train, X_temp, y_train, y_temp = train_test_split(
@@ -51,17 +50,18 @@ def preprocessing(data, test_size, validation_size) :
     )
 
     return PreprocessedData(
-        X_train=X_train,
-        X_test=X_test,
-        X_validation=X_validation,
+        X_train=X_train.to_numpy(),
+        X_test=X_test.to_numpy(),
+        X_validation=X_validation.to_numpy(),
         y_train=y_train,
         y_test=y_test,
         y_validation=y_validation,
     )
 
 if __name__ == "__main__":
-    print(preprocessing(
+    dataset = preprocessing(
         data=data_diabetes,
         test_size=test_size,
         validation_size=validation_size,
-    ))
+    )
+    print(len(dataset.X_test[0]))
