@@ -18,7 +18,13 @@ source .venv/bin/activate   # Linux / macOS
 ```
 
 ```bash
-uv sync
+make install
+```
+
+## Formatter le code
+
+```bash
+make
 ```
 
 ## Utilisation du script

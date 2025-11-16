@@ -15,9 +15,6 @@ dependencies = [
 # Match your project’s Python version
 target-version = "py313"
 
-# Directories to lint
-src = ["./", "main.py"]
-
 # Ignore common virtual environment / build directories
 exclude = [
     ".git",
