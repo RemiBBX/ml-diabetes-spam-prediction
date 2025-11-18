@@ -20,7 +20,7 @@ class MLPModel(LearningModelInterface):
 
         self.learning_rate = 0.001
         self.batch_size = 512
-        self.epochs = 10
+        self.epochs = 15
 
         self.model = MLP_nn(input_size=self.input_size, hidden_size=self.hidden_size, output_size=1, layer_size=self.layer_size)
 
@@ -30,7 +30,7 @@ class MLPModel(LearningModelInterface):
         self.X_val = torch.tensor(samples.X_validation, dtype=torch.float32)
         self.y_val = torch.tensor(samples.y_validation, dtype=torch.float32)
         self.X_test = torch.tensor(samples.X_test, dtype=torch.float32)
-        self.y_tes = torch.tensor(samples.y_test, dtype=torch.float32)
+        self.y_test = torch.tensor(samples.y_test, dtype=torch.float32)
 
         self.train_loader = DataLoader(
             TensorDataset(self.X_train, self.y_train),
@@ -57,8 +57,9 @@ class MLPModel(LearningModelInterface):
             print_every_epochs=1
         )
 
-    def predict(self) -> np.ndarray:
-        probs = torch.sigmoid(self.model(self.X_test)).detach().cpu().numpy().flatten()
+    def predict(self, x) -> np.ndarray:
+        X_test = torch.tensor(x, dtype=torch.float32)
+        probs = torch.sigmoid(self.model(X_test)).detach().cpu().numpy().flatten()
 
         t = 0.5
         pred = (probs >= t).astype(int)

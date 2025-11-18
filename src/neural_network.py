@@ -43,6 +43,8 @@ def train_model(
     print_every_epochs=1,
     ):
 
+    best_val_loss = float("inf")
+    best_state = None
 
     # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
     #     optimizer=optimizer,
@@ -77,10 +79,23 @@ def train_model(
 
         train_loss /= len(train_loader.sampler)
         valid_loss /= len(val_loader.sampler)
-        if i % print_every_epochs == 0:
-            print('epoch: {} \ttraining Loss: {:.6f} \tvalidation Loss: {:.6f}'.format(i + 1, train_loss, valid_loss))
+
         train_losses.append(train_loss)
         valid_losses.append(valid_loss)
+
+        if i % print_every_epochs == 0:
+            print('epoch: {} \ttraining Loss: {:.6f} '.format(i + 1, train_loss, valid_loss))
+        train_losses.append(train_loss)
+        valid_losses.append(valid_loss)
+
+        if valid_loss < best_val_loss:
+            best_val_loss = valid_loss
+            best_state = model.state_dict()
+            print(f"Validation loss improved → new best = {best_val_loss:.6f}")
+        else:
+            print(
+                f"No improvement in validation loss (current: {valid_loss:.6f}, best: {best_val_loss:.6f}) → reverting weights")
+            model.load_state_dict(best_state)
 
     return train_losses, valid_losses
 
