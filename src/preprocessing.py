@@ -175,5 +175,5 @@ def visualize(data, selected_features, random=False):
 
 
 if __name__ == "__main__":
-    print(preprocessing(data_spam, test_size, validation_size))
+    #print(preprocessing(data_spam, test_size, validation_size))
     visualize(data_diabetes, [], random=True)

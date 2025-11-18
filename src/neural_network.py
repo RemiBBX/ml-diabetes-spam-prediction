@@ -14,7 +14,7 @@ class MLP_nn(nn.Module):
     def __init__(self, input_size, hidden_size, output_size, layer_size = 3, drop_rate = 0.4):
         super(MLP_nn, self).__init__()
         self.relu = nn.ReLU()
-        self.sigmoid = nn.Sigmoid()
+        #self.sigmoid = nn.Sigmoid()
         self.dropout = nn.Dropout(drop_rate)
 
         self.layers = nn.ModuleList()
@@ -27,9 +27,10 @@ class MLP_nn(nn.Module):
     def forward(self, x):
         for layer in self.layers[:-1]:
             x = self.relu(layer(x))
-        x = self.dropout(x)
+            x = self.dropout(x)
+        x = self.layers[-1](x)
 
-        return self.layers[-1](x)
+        return x
 
 
 def train_model(
@@ -43,16 +44,18 @@ def train_model(
     ):
 
 
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
-        optimizer=optimizer,
-        T_max=epochs,
-        eta_min=1e-6
-    )
+    # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+    #     optimizer=optimizer,
+    #     T_max=epochs,
+    #     eta_min=1e-6
+    # )
+    scheduler = None
 
     train_losses, valid_losses = [], []
 
     for i in range(epochs):
         ## Training
+        model.train()
         train_loss, valid_loss = 0, 0
         for data, label in train_loader:
             optimizer.zero_grad()
@@ -62,7 +65,7 @@ def train_model(
             optimizer.step()
 
             train_loss += loss.item() * data.size(0)
-        scheduler.step()
+        #scheduler.step()
 
         ## Validation against val loader
         model.eval()
