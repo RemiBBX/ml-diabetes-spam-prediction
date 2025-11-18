@@ -1,24 +1,24 @@
 import torch.nn
+from sklearn.metrics import classification_report
 from torch.utils.data import DataLoader, TensorDataset
 
 from src.neural_network import MLP_nn, train_model
 from src.preprocessing import preprocessing
-from src.utils import compute_accuracy
 
 data_diabetes = "./data/diabetes_binary_health_indicators_BRFSS2015.csv"
 input_size = 21
-train_size = 0.7
+train_size = 0.8
 validation_size = 0.15
-test_size = 0.15
+test_size = 0.2
 
-learning_rate = 0.001
+learning_rate = 0.1
 epochs = 10
 
-hidden_size = 128
+hidden_size = 10
 
 
 if __name__ == "__main__":
-    MLP = MLP_nn(input_size=input_size, hidden_size=hidden_size, output_size=1, layer_size=2)
+    MLP = MLP_nn(input_size=input_size, hidden_size=hidden_size, output_size=1, layer_size=3)
 
     # Optimizer: new_parameters = old_parameters - lr*gradient, with lr the learning rate
 
@@ -44,11 +44,17 @@ if __name__ == "__main__":
     )
 
 
+    # Changer l'init
+    # Verifier la stratify
+    # Dropout
+    # AdamW
+    # cross val
+
 
     pos = torch.count_nonzero(y_train)
     zeros = X_train.shape[0] - pos
     criterion = torch.nn.BCEWithLogitsLoss(pos_weight=zeros/pos)
-    optimizer = torch.optim.Adam(MLP.parameters(), lr=learning_rate)
+    optimizer = torch.optim.AdamW(MLP.parameters(), lr=learning_rate)
 
     train_model(
         model=MLP,
@@ -60,10 +66,11 @@ if __name__ == "__main__":
         print_every_epochs=1
     )
 
-    y_predict = torch.sigmoid(MLP(X_test))
-    accu = compute_accuracy(
-        y_test_list=y_test,
-        y_pred_list=y_predict,
+    y_predict = MLP(X_test)
+    y_predict = (y_predict > 0.5).int()
+    accu = classification_report(
+        y_true=y_test.detach().numpy(),
+        y_pred=y_predict.detach().numpy(),
     )
 
     print(accu)

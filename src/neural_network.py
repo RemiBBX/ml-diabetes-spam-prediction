@@ -27,9 +27,10 @@ class MLP_nn(nn.Module):
     def forward(self, x):
         for layer in self.layers[:-1]:
             x = self.relu(layer(x))
-        x = self.dropout(x)
+        x = self.layers[-1](x)
+        x =self.sigmoid(x)
 
-        return self.layers[-1](x)
+        return x
 
 
 def train_model(
