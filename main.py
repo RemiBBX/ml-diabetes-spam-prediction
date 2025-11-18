@@ -1,6 +1,14 @@
-from preprocessing import data_diabetes, data_spam, preprocessing
 from src.knn import KNNModel
+from src.nn_interface import MLPModel
+from src.preprocessing import data_diabetes, data_spam, preprocessing
 from src.RForest import RForest
+
+
+def nn():
+    samples = preprocessing(data=data_diabetes, test_size=0.15, validation_size=0.15)
+    model = MLPModel()
+    model.train(samples)
+    model.benchmark(samples.X_test, samples.y_test)
 
 
 def knn():
