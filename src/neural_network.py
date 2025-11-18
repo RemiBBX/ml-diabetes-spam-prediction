@@ -10,10 +10,11 @@ class Layer:
 
 
 class MLP_nn(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size, layer_size=3, drop_rate=0.4):
+
+    def __init__(self, input_size, hidden_size, output_size, layer_size = 3, drop_rate = 0.4):
         super(MLP_nn, self).__init__()
         self.relu = nn.ReLU()
-        self.sigmoid = nn.Sigmoid()
+        #self.sigmoid = nn.Sigmoid()
         self.dropout = nn.Dropout(drop_rate)
 
         self.layers = nn.ModuleList()
@@ -26,8 +27,8 @@ class MLP_nn(nn.Module):
     def forward(self, x):
         for layer in self.layers[:-1]:
             x = self.relu(layer(x))
+            x = self.dropout(x)
         x = self.layers[-1](x)
-        x = self.sigmoid(x)
 
         return x
 
@@ -40,13 +41,21 @@ def train_model(
     optimizer,
     epochs=30,
     print_every_epochs=1,
-):
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer=optimizer, T_max=epochs, eta_min=1e-6)
+    ):
+
+
+    # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+    #     optimizer=optimizer,
+    #     T_max=epochs,
+    #     eta_min=1e-6
+    # )
+    scheduler = None
 
     train_losses, valid_losses = [], []
 
     for i in range(epochs):
         ## Training
+        model.train()
         train_loss, valid_loss = 0, 0
         for data, label in train_loader:
             optimizer.zero_grad()
@@ -56,7 +65,7 @@ def train_model(
             optimizer.step()
 
             train_loss += loss.item() * data.size(0)
-        scheduler.step()
+        #scheduler.step()
 
         ## Validation against val loader
         model.eval()
@@ -69,7 +78,7 @@ def train_model(
         train_loss /= len(train_loader.sampler)
         valid_loss /= len(val_loader.sampler)
         if i % print_every_epochs == 0:
-            print("epoch: {} \ttraining Loss: {:.6f} \tvalidation Loss: {:.6f}".format(i + 1, train_loss, valid_loss))
+            print('epoch: {} \ttraining Loss: {:.6f} \tvalidation Loss: {:.6f}'.format(i + 1, train_loss, valid_loss))
         train_losses.append(train_loss)
         valid_losses.append(valid_loss)
 
@@ -79,3 +88,4 @@ def train_model(
 if __name__ == "__main__":
     learning_rate = 0.001
     MLP = MLP_nn(input_size=21, hidden_size=100, output_size=1, layer_size=3)
+
