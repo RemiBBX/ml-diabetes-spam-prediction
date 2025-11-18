@@ -6,8 +6,10 @@ from src.model_interface import LearningModelInterface
 
 
 class KNNModel(LearningModelInterface):
-    def __init__(self, k) -> None:
-        self.model = KNeighborsClassifier(n_neighbors=k)
+    K = 3
+
+    def __init__(self) -> None:
+        self.model = KNeighborsClassifier(n_neighbors=self.K)
 
     def train(self, x: np.ndarray, y: np.ndarray) -> None:
         self.model.fit(x, ravel(y))
