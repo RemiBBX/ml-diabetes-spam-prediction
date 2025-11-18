@@ -43,17 +43,15 @@ if __name__ == "__main__":
         shuffle=True,
     )
 
-
     # Changer l'init
     # Verifier la stratify
     # Dropout
     # AdamW
     # cross val
 
-
     pos = torch.count_nonzero(y_train)
     zeros = X_train.shape[0] - pos
-    criterion = torch.nn.BCEWithLogitsLoss(pos_weight=zeros/pos)
+    criterion = torch.nn.BCEWithLogitsLoss(pos_weight=zeros / pos)
     optimizer = torch.optim.AdamW(MLP.parameters(), lr=learning_rate)
 
     train_model(
@@ -63,7 +61,7 @@ if __name__ == "__main__":
         criterion=criterion,
         optimizer=optimizer,
         epochs=epochs,
-        print_every_epochs=1
+        print_every_epochs=1,
     )
 
     y_predict = MLP(X_test)
@@ -74,5 +72,3 @@ if __name__ == "__main__":
     )
 
     print(accu)
-
-
