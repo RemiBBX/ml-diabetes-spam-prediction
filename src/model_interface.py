@@ -1,9 +1,9 @@
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 
 import numpy as np
 
 
-class LearningModelInterface:
+class LearningModelInterface(ABC):
     @abstractmethod
     def train(self, x: np.ndarray, y: np.ndarray) -> None:
         pass
@@ -13,4 +13,4 @@ class LearningModelInterface:
         pass
 
     def benchmark(self):
-        pass
+        print()
