@@ -7,6 +7,7 @@ import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
+
 data_diabetes = "./data/diabetes_binary_health_indicators_BRFSS2015.csv"
 data_spam = "./data/spambase/spambase.data"
 # data_spam = "/Users/alexis/Documents/Scolarité/REPO/projet-ml/data/spambase/spambase.data"
@@ -141,6 +142,9 @@ def preprocessing(data, test_size, validation_size):
 
 def visualize(data, selected_features, random=False):
     X, y, df, feature_names = load_data(data)
+
+    X = StandardScaler().fit_transform(X)  # moyenne nulle et variance unité
+
     feature_names.remove("Class")
     np.random.seed(42)  # pour reproductibilité
     if random:
@@ -161,6 +165,27 @@ def visualize(data, selected_features, random=False):
         )
         plt.show()
 
+    pairs = [(0, 1), (0, 2), (1, 2)]
+    for i, j in pairs:
+        plt.figure(figsize=(6, 5))
+        plt.scatter(df[selected_features[i]], df[selected_features[j]], c=y, cmap='bwr', alpha=0.7)
+        plt.xlabel(selected_features[i])
+        plt.ylabel(selected_features[j])
+        plt.title(f"Scatterplot: {selected_features[i]} vs {selected_features[j]}")
+        plt.colorbar(label='Classe')
+        plt.show()
+
+    # 3 Scatterplot 3D
+    fig = plt.figure(figsize=(8, 6))
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(df[selected_features[0]], df[selected_features[1]], df[selected_features[2]],
+               c=y, cmap='bwr', alpha=0.7)
+    ax.set_xlabel(selected_features[0])
+    ax.set_ylabel(selected_features[1])
+    ax.set_zlabel(selected_features[2])
+    ax.set_title("Scatterplot 3D des 3 features choisies")
+    plt.show()
+
     # Matrice de corrélation
     corr_matrix = df[feature_names].corr()
     plt.figure(figsize=(8, 6))
@@ -178,4 +203,4 @@ def visualize(data, selected_features, random=False):
 
 if __name__ == "__main__":
     # print(preprocessing(data_spam, test_size, validation_size))
-    visualize(data_diabetes, [], random=True)
+    visualize(data_spam, [], random=True)
