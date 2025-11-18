@@ -39,7 +39,7 @@ def train_model(
     val_loader,
     criterion,
     optimizer,
-    epochs=30,
+    epochs,
     print_every_epochs=1,
     ):
 
