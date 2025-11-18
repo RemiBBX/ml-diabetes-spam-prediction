@@ -118,7 +118,7 @@ def preprocessing(data, test_size, validation_size):
         random_state=42,
         stratify=y,  # Classes en même proportion que dans le dataset entier
     )
-    if validation_size != 0 :
+    if validation_size != 0:
         X_test, X_validation, y_test, y_validation = train_test_split(
             X_temp,
             y_temp,
@@ -126,7 +126,7 @@ def preprocessing(data, test_size, validation_size):
             random_state=42,
             stratify=y_temp,  # classes en même proportion que dans le dataset entier
         )
-    else :
+    else:
         X_test, X_validation, y_test, y_validation = X_temp, [], y_temp, []
 
     return PreprocessedData(
@@ -177,5 +177,5 @@ def visualize(data, selected_features, random=False):
 
 
 if __name__ == "__main__":
-    #print(preprocessing(data_spam, test_size, validation_size))
+    # print(preprocessing(data_spam, test_size, validation_size))
     visualize(data_diabetes, [], random=True)

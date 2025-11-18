@@ -1,10 +1,9 @@
 import torch
-from torch.utils.data import DataLoader, TensorDataset
 from sklearn.datasets import load_breast_cancer
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
+from sklearn.model_selection import train_test_split
+from torch.utils.data import DataLoader, TensorDataset
 
-from src.neural_network import MLP_nn
 from src.neural_network import MLP_nn, train_model
 
 # -------------------
@@ -14,17 +13,14 @@ data = load_breast_cancer()
 X = torch.tensor(data.data, dtype=torch.float32)
 y = torch.tensor(data.target, dtype=torch.float32).unsqueeze(1)
 
-input_size = X.shape[1]   # 30 pour le dataset breast cancer
-hidden_size = 64           # ou ce que tu veux
-layers = 3                 # nombre de couches cachées
+input_size = X.shape[1]  # 30 pour le dataset breast cancer
+hidden_size = 64  # ou ce que tu veux
+layers = 3  # nombre de couches cachées
 drop_rate = 0.1
 
-MLP = MLP_nn(input_size=input_size, hidden_size=hidden_size,
-             output_size=1, layer_size=layers, drop_rate=drop_rate)
+MLP = MLP_nn(input_size=input_size, hidden_size=hidden_size, output_size=1, layer_size=layers, drop_rate=drop_rate)
 # Train/test split
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42, stratify=y
-)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 
 # DataLoaders
 train_loader = DataLoader(TensorDataset(X_train, y_train), batch_size=32, shuffle=True)
@@ -55,7 +51,7 @@ train_model(
     criterion=criterion,
     optimizer=optimizer,
     epochs=20,
-    print_every_epochs=1
+    print_every_epochs=1,
 )
 
 # -------------------

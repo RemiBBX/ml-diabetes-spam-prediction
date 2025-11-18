@@ -1,11 +1,10 @@
-import torch.nn
 import numpy as np
+import torch.nn
 from torch.utils.data import DataLoader, TensorDataset
 
 from src.model_interface import LearningModelInterface
 from src.neural_network import MLP_nn, train_model
-from src.preprocessing import preprocessing, data_diabetes, data_spam
-from sklearn.metrics import confusion_matrix, classification_report
+
 
 class MLPModel(LearningModelInterface):
     def __init__(self) -> None:
@@ -22,7 +21,9 @@ class MLPModel(LearningModelInterface):
         self.batch_size = 512
         self.epochs = 15
 
-        self.model = MLP_nn(input_size=self.input_size, hidden_size=self.hidden_size, output_size=1, layer_size=self.layer_size)
+        self.model = MLP_nn(
+            input_size=self.input_size, hidden_size=self.hidden_size, output_size=1, layer_size=self.layer_size
+        )
 
     def train(self, samples) -> None:
         self.X_train = torch.tensor(samples.X_train, dtype=torch.float32)
@@ -54,7 +55,7 @@ class MLPModel(LearningModelInterface):
             criterion=criterion,
             optimizer=optimizer,
             epochs=self.epochs,
-            print_every_epochs=1
+            print_every_epochs=1,
         )
 
     def predict(self, x) -> np.ndarray:

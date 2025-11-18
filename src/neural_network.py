@@ -10,11 +10,10 @@ class Layer:
 
 
 class MLP_nn(nn.Module):
-
-    def __init__(self, input_size, hidden_size, output_size, layer_size = 3, drop_rate = 0.4):
+    def __init__(self, input_size, hidden_size, output_size, layer_size=3, drop_rate=0.4):
         super(MLP_nn, self).__init__()
         self.relu = nn.ReLU()
-        #self.sigmoid = nn.Sigmoid()
+        # self.sigmoid = nn.Sigmoid()
         self.dropout = nn.Dropout(drop_rate)
 
         self.layers = nn.ModuleList()
@@ -41,8 +40,7 @@ def train_model(
     optimizer,
     epochs,
     print_every_epochs=1,
-    ):
-
+):
     best_val_loss = float("inf")
     best_state = None
 
@@ -51,7 +49,6 @@ def train_model(
     #     T_max=epochs,
     #     eta_min=1e-6
     # )
-    scheduler = None
 
     train_losses, valid_losses = [], []
 
@@ -67,7 +64,7 @@ def train_model(
             optimizer.step()
 
             train_loss += loss.item() * data.size(0)
-        #scheduler.step()
+        # scheduler.step()
 
         ## Validation against val loader
         model.eval()
@@ -84,7 +81,12 @@ def train_model(
         valid_losses.append(valid_loss)
 
         if i % print_every_epochs == 0:
-            print('epoch: {} \ttraining Loss: {:.6f} '.format(i + 1, train_loss, valid_loss))
+            print(
+                "epoch: {} \ttraining Loss: {:.6f} ".format(
+                    i + 1,
+                    train_loss,
+                )
+            )
         train_losses.append(train_loss)
         valid_losses.append(valid_loss)
 
@@ -94,7 +96,9 @@ def train_model(
             print(f"Validation loss improved → new best = {best_val_loss:.6f}")
         else:
             print(
-                f"No improvement in validation loss (current: {valid_loss:.6f}, best: {best_val_loss:.6f}) → reverting weights")
+                f"No improvement in validation loss (current: {valid_loss:.6f}, best: {best_val_loss:.6f}) "
+                f"→ reverting weights"
+            )
             model.load_state_dict(best_state)
 
     return train_losses, valid_losses
@@ -103,4 +107,3 @@ def train_model(
 if __name__ == "__main__":
     learning_rate = 0.001
     MLP = MLP_nn(input_size=21, hidden_size=100, output_size=1, layer_size=3)
-
