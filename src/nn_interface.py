@@ -1,3 +1,5 @@
+from typing import Literal
+
 import numpy as np
 import torch.nn
 from torch.utils.data import DataLoader, TensorDataset
@@ -7,9 +9,9 @@ from src.neural_network import MLP_nn, train_model
 
 
 class MLPModel(LearningModelInterface):
-    def __init__(self) -> None:
+    def __init__(self, input_size: Literal[57, 21]) -> None:
         ## Parameters
-        self.input_size = 21
+        self.input_size = input_size
         self.layer_size = 3
         self.hidden_size = 128
 
