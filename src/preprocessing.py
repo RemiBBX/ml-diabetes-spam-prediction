@@ -7,7 +7,6 @@ import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
-
 data_diabetes = "./data/diabetes_binary_health_indicators_BRFSS2015.csv"
 data_spam = "./data/spambase/spambase.data"
 # data_spam = "/Users/alexis/Documents/Scolarité/REPO/projet-ml/data/spambase/spambase.data"
@@ -26,11 +25,12 @@ with open("./data/spambase/spambase.names", "r") as f:
             if col.lower() == "class":
                 continue
             column_names.append(col)
-column_names.append('Class')
+column_names.append("Class")
 
 train_size = 0.7
 validation_size = 0.15
 test_size = 0.15
+
 
 @dataclass
 class PreprocessedData:
@@ -58,6 +58,7 @@ def load_data(data):
 
     return X, y, df, feature_names
 
+
 def detect_binary_and_continuous(df):
     binary_cols = []
     continuous_cols = []
@@ -68,6 +69,7 @@ def detect_binary_and_continuous(df):
         else:
             continuous_cols.append(col)
     return binary_cols, continuous_cols
+
 
 def preprocessing(data, test_size, validation_size):
     X, y, df, _ = load_data(data)
@@ -97,9 +99,9 @@ def preprocessing(data, test_size, validation_size):
         X_test, X_validation, y_test, y_validation = X_temp, [], y_temp, []
 
     return PreprocessedData(
-        X_train=X_train,
-        X_test=X_test,
-        X_validation=X_validation,
+        X_train=X_train.to_numpy(),
+        X_test=X_test.to_numpy(),
+        X_validation=X_validation.to_numpy(),
         y_train=y_train,
         y_test=y_test,
         y_validation=y_validation,
@@ -114,17 +116,15 @@ def visualize(data, selected_features, random=False):
     scaler = StandardScaler()
     df[continuous_cols] = scaler.fit_transform(df[continuous_cols])
 
-
-
     feature_names.remove("Class")
-    #np.random.seed(42)  # pour reproductibilité
+    # np.random.seed(42)  # pour reproductibilité
     if random:
         selected_features = np.random.choice(feature_names, size=5, replace=True)
     print(selected_features)
     print("Features choisies :", selected_features)
     selected_features = list(selected_features)
 
-    sns.pairplot(df[selected_features + ['Class']] , hue='Class')
+    sns.pairplot(df[selected_features + ["Class"]], hue="Class")
     plt.show()
 
     # Matrice de corrélation
