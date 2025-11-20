@@ -7,75 +7,30 @@ import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
+
 data_diabetes = "./data/diabetes_binary_health_indicators_BRFSS2015.csv"
 data_spam = "./data/spambase/spambase.data"
 # data_spam = "/Users/alexis/Documents/Scolarité/REPO/projet-ml/data/spambase/spambase.data"
 
-column_names = [
-    "word_freq_make",
-    "word_freq_address",
-    "word_freq_all",
-    "word_freq_3d",
-    "word_freq_our",
-    "word_freq_over",
-    "word_freq_remove",
-    "word_freq_internet",
-    "word_freq_order",
-    "word_freq_mail",
-    "word_freq_receive",
-    "word_freq_will",
-    "word_freq_people",
-    "word_freq_report",
-    "word_freq_addresses",
-    "word_freq_free",
-    "word_freq_business",
-    "word_freq_email",
-    "word_freq_you",
-    "word_freq_credit",
-    "word_freq_your",
-    "word_freq_font",
-    "word_freq_000",
-    "word_freq_money",
-    "word_freq_hp",
-    "word_freq_hpl",
-    "word_freq_george",
-    "word_freq_650",
-    "word_freq_lab",
-    "word_freq_labs",
-    "word_freq_telnet",
-    "word_freq_857",
-    "word_freq_data",
-    "word_freq_415",
-    "word_freq_85",
-    "word_freq_technology",
-    "word_freq_1999",
-    "word_freq_parts",
-    "word_freq_pm",
-    "word_freq_direct",
-    "word_freq_cs",
-    "word_freq_meeting",
-    "word_freq_original",
-    "word_freq_project",
-    "word_freq_re",
-    "word_freq_edu",
-    "word_freq_table",
-    "word_freq_conference",
-    "char_freq_;",
-    "char_freq_(",
-    "char_freq_[",
-    "char_freq_!",
-    "char_freq_$",
-    "char_freq_#",
-    "capital_run_length_average",
-    "capital_run_length_longest",
-    "capital_run_length_total",
-    "Class",
-]
+# Récupération des features de spambase
+column_names = []
+with open("./data/spambase/spambase.names", "r") as f:
+    for line in f:
+        line = line.strip()
+        # ignorer commentaires, lignes vides, et la ligne de classes
+        if not line or line.startswith("|") or line.startswith("1,"):
+            continue
+        # ne garder que les lignes "attribut: type."
+        if ":" in line:
+            col = line.split(":")[0].strip()
+            if col.lower() == "class":
+                continue
+            column_names.append(col)
+column_names.append('Class')
 
 train_size = 0.7
 validation_size = 0.15
 test_size = 0.15
-
 
 @dataclass
 class PreprocessedData:
@@ -103,12 +58,24 @@ def load_data(data):
 
     return X, y, df, feature_names
 
+def detect_binary_and_continuous(df):
+    binary_cols = []
+    continuous_cols = []
+    for col in df.columns:
+        unique_vals = df[col].dropna().unique()
+        if len(unique_vals) == 2:  # binaire
+            binary_cols.append(col)
+        else:
+            continuous_cols.append(col)
+    return binary_cols, continuous_cols
 
 def preprocessing(data, test_size, validation_size):
     X, y, df, _ = load_data(data)
+    _, continuous_cols = detect_binary_and_continuous(df)
 
-    ## Standardisation avec scikit
-    X = StandardScaler().fit_transform(X)  # moyenne nulle et variance unité
+    ## Standardisation avec scikit, seulement les features continues
+    scaler = StandardScaler()
+    X[continuous_cols] = scaler.fit_transform(X[continuous_cols])
     y = y.to_numpy().reshape(-1, 1)
 
     X_train, X_temp, y_train, y_temp = train_test_split(
@@ -141,25 +108,24 @@ def preprocessing(data, test_size, validation_size):
 
 def visualize(data, selected_features, random=False):
     X, y, df, feature_names = load_data(data)
+    _, continuous_cols = detect_binary_and_continuous(df)
+
+    ## Standardisation avec scikit, seulement les features continues
+    scaler = StandardScaler()
+    df[continuous_cols] = scaler.fit_transform(df[continuous_cols])
+
+
+
     feature_names.remove("Class")
-    np.random.seed(42)  # pour reproductibilité
+    #np.random.seed(42)  # pour reproductibilité
     if random:
-        selected_features = np.random.choice(feature_names, size=3, replace=True)
+        selected_features = np.random.choice(feature_names, size=5, replace=True)
     print(selected_features)
     print("Features choisies :", selected_features)
+    selected_features = list(selected_features)
 
-    for i in selected_features:
-        plt.figure()
-        sns.histplot(
-            data=df,
-            x=i,
-            hue=y,  # Sépare les données par la Classe (0 ou 1)
-            multiple="stack",  # <--- CHANGEMENT CLÉ : Empile les barres au lieu de les superposer
-            bins=30,
-            palette="bwr",  # Palette Bleu/Rouge
-            edgecolor="black",  # Ajout d'une bordure pour mieux délimiter les barres
-        )
-        plt.show()
+    sns.pairplot(df[selected_features + ['Class']] , hue='Class')
+    plt.show()
 
     # Matrice de corrélation
     corr_matrix = df[feature_names].corr()
@@ -177,5 +143,4 @@ def visualize(data, selected_features, random=False):
 
 
 if __name__ == "__main__":
-    # print(preprocessing(data_spam, test_size, validation_size))
     visualize(data_diabetes, [], random=True)
