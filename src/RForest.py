@@ -28,6 +28,7 @@ class RForest(LearningModelInterface):
 
         self.best_params_ = grid.best_params_
         self.model = grid.best_estimator_
+        print("Best hyperparameters found with Grid Search:", self.best_params_)
 
     def predict(self, x):
         return self.model.predict(x)
