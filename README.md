@@ -5,6 +5,7 @@
 ```bash
 pip install uv
 ````
+Ou regarder la [notice d'installation de uv](https://docs.astral.sh/uv/getting-started/installation/)
 
 ## Initialisation du projet
 
@@ -26,7 +27,3 @@ make install
 ```bash
 make
 ```
-
-## Utilisation du script
-
-TODO
