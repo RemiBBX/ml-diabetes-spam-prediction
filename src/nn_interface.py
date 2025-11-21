@@ -9,7 +9,7 @@ from src.neural_network import MLP_nn, train_model
 
 
 class MLPModel(LearningModelInterface):
-    def __init__(self, input_size: Literal[57, 21]) -> None:
+    def __init__(self, input_size: Literal[57, 21], epochs) -> None:
         ## Parameters
         self.input_size = input_size
         self.layer_size = 3
@@ -21,7 +21,7 @@ class MLPModel(LearningModelInterface):
 
         self.learning_rate = 0.001
         self.batch_size = 512
-        self.epochs = 30
+        self.epochs = epochs
 
         self.model = MLP_nn(
             input_size=self.input_size, hidden_size=self.hidden_size, output_size=1, layer_size=self.layer_size
