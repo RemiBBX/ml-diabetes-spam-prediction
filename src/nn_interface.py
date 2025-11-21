@@ -21,7 +21,7 @@ class MLPModel(LearningModelInterface):
 
         self.learning_rate = 0.001
         self.batch_size = 512
-        self.epochs = 15
+        self.epochs = 30
 
         self.model = MLP_nn(
             input_size=self.input_size, hidden_size=self.hidden_size, output_size=1, layer_size=self.layer_size
