@@ -120,11 +120,12 @@ def visualize(data, selected_features, random=False):
     # np.random.seed(42)  # pour reproductibilité
     if random:
         selected_features = np.random.choice(feature_names, size=5, replace=True)
-    print(selected_features)
-    print("Features choisies :", selected_features)
     selected_features = list(selected_features)
 
-    sns.pairplot(df[selected_features + ["Class"]], hue="Class")
+    df["Class"] = df["Class"].to_numpy()
+    if 'Class' not in selected_features:
+        selected_features += ["Class"]
+    sns.pairplot(df[selected_features], hue="Class")
     plt.show()
 
     # Matrice de corrélation
