@@ -11,7 +11,7 @@ def explain_random_forest(model, X_train, X_test, feature_names, max_samples=100
     """
     Analyse SHAP pour un modèle Random Forest
     """
-    print(f"=== Analyse SHAP pour Random Forest ===")
+    print("=== Analyse SHAP pour Random Forest ===")
 
     # Limiter le nombre de samples si nécessaire
     if len(X_test) > max_samples:
@@ -20,7 +20,7 @@ def explain_random_forest(model, X_train, X_test, feature_names, max_samples=100
         X_test = X_test[indices]
 
     # 1. Créer le TreeExplainer
-    print(f"Création du TreeExplainer pour Random Forest...")
+    print("Création du TreeExplainer pour Random Forest...")
     explainer = shap.TreeExplainer(model)
     print(f"Expected value (baseline): {explainer.expected_value}")
 
@@ -44,8 +44,7 @@ def explain_random_forest(model, X_train, X_test, feature_names, max_samples=100
     # 4. Summary plot détaillé (avec distribution des valeurs)
     print("Génération du summary plot détaillé...")
     plt.figure(figsize=(10, 6))
-    shap.summary_plot(shap_values, X_test, feature_names=feature_names,
-                      plot_type="dot", show=False)
+    shap.summary_plot(shap_values, X_test, feature_names=feature_names, plot_type="dot", show=False)
     plt.title("Random Forest - Impact des features (valeurs hautes en rouge)")
     plt.tight_layout()
     plt.show()
@@ -57,7 +56,7 @@ def explain_random_forest(model, X_train, X_test, feature_names, max_samples=100
 # Fonction 2 : SHAP pour MLP PyTorch
 def explain_mlp(model, X_train, X_test, feature_names, n_background=100, n_test_samples=200):
     """Analyse SHAP pour un MLP PyTorch"""
-    print(f"=== Analyse SHAP pour MLP PyTorch ===")
+    print("=== Analyse SHAP pour MLP PyTorch ===")
 
     # Mode évaluation (désactive dropout, batch norm, etc.)
     model.eval()
@@ -116,8 +115,7 @@ def explain_mlp(model, X_train, X_test, feature_names, n_background=100, n_test_
     # Summary plot détaillé
     print("Génération du summary plot détaillé...")
     plt.figure(figsize=(10, 6))
-    shap.summary_plot(shap_values, X_test_sample, feature_names=feature_names,
-                      plot_type="dot", show=False)
+    shap.summary_plot(shap_values, X_test_sample, feature_names=feature_names, plot_type="dot", show=False)
     plt.title("MLP PyTorch - Impact des features (valeurs hautes en rouge)")
     plt.tight_layout()
     plt.show()
@@ -138,14 +136,10 @@ def compare_models_shap(rf_shap_values, mlp_shap_values, X_test_rf, X_test_mlp, 
     print(f"MLP importance shape: {mlp_importance.shape}")
 
     # Créer un DataFrame pour faciliter la comparaison
-    comparison_df = pd.DataFrame({
-        'Feature': feature_names,
-        'Random Forest': rf_importance,
-        'MLP': mlp_importance
-    })
+    comparison_df = pd.DataFrame({"Feature": feature_names, "Random Forest": rf_importance, "MLP": mlp_importance})
 
     # Trier par importance Random Forest
-    comparison_df = comparison_df.sort_values('Random Forest', ascending=False)
+    comparison_df = comparison_df.sort_values("Random Forest", ascending=False)
 
     print("\nTop 5 features - Random Forest:")
     print(comparison_df.head())
@@ -154,46 +148,43 @@ def compare_models_shap(rf_shap_values, mlp_shap_values, X_test_rf, X_test_mlp, 
     fig, axes = plt.subplots(1, 2, figsize=(16, 6))
 
     # Random Forest
-    axes[0].barh(comparison_df['Feature'], comparison_df['Random Forest'], color='forestgreen')
-    axes[0].set_xlabel('Importance SHAP moyenne')
-    axes[0].set_title('Random Forest - Feature Importance')
+    axes[0].barh(comparison_df["Feature"], comparison_df["Random Forest"], color="forestgreen")
+    axes[0].set_xlabel("Importance SHAP moyenne")
+    axes[0].set_title("Random Forest - Feature Importance")
     axes[0].invert_yaxis()
-    axes[0].grid(axis='x', alpha=0.3)
+    axes[0].grid(axis="x", alpha=0.3)
 
     # MLP
-    axes[1].barh(comparison_df['Feature'], comparison_df['MLP'], color='steelblue')
-    axes[1].set_xlabel('Importance SHAP moyenne')
-    axes[1].set_title('MLP PyTorch - Feature Importance')
+    axes[1].barh(comparison_df["Feature"], comparison_df["MLP"], color="steelblue")
+    axes[1].set_xlabel("Importance SHAP moyenne")
+    axes[1].set_title("MLP PyTorch - Feature Importance")
     axes[1].invert_yaxis()
-    axes[1].grid(axis='x', alpha=0.3)
+    axes[1].grid(axis="x", alpha=0.3)
 
     plt.tight_layout()
     plt.show()
 
     # Graphique de corrélation
     plt.figure(figsize=(8, 6))
-    plt.scatter(comparison_df['Random Forest'], comparison_df['MLP'], alpha=0.6, s=100)
+    plt.scatter(comparison_df["Random Forest"], comparison_df["MLP"], alpha=0.6, s=100)
 
     for idx, row in comparison_df.iterrows():
-        plt.annotate(row['Feature'],
-                     (row['Random Forest'], row['MLP']),
-                     fontsize=8, alpha=0.7)
+        plt.annotate(row["Feature"], (row["Random Forest"], row["MLP"]), fontsize=8, alpha=0.7)
 
-    max_val = max(comparison_df['Random Forest'].max(), comparison_df['MLP'].max())
-    plt.plot([0, max_val], [0, max_val], 'r--', alpha=0.5, label='Accord parfait')
+    max_val = max(comparison_df["Random Forest"].max(), comparison_df["MLP"].max())
+    plt.plot([0, max_val], [0, max_val], "r--", alpha=0.5, label="Accord parfait")
 
-    plt.xlabel('Importance SHAP - Random Forest')
-    plt.ylabel('Importance SHAP - MLP')
-    plt.title('Corrélation des importances entre RF et MLP')
+    plt.xlabel("Importance SHAP - Random Forest")
+    plt.ylabel("Importance SHAP - MLP")
+    plt.title("Corrélation des importances entre RF et MLP")
     plt.legend()
     plt.grid(alpha=0.3)
     plt.tight_layout()
     plt.show()
 
     # Calculer la corrélation de Pearson
-    from scipy.stats import pearsonr
 
-    corr, p_value = pearsonr(comparison_df['Random Forest'], comparison_df['MLP'])
+    corr, p_value = pearsonr(comparison_df["Random Forest"], comparison_df["MLP"])
     print(f"\nCorrélation de Pearson entre RF et MLP: {corr:.3f} (p-value: {p_value:.4f})")
 
     if corr > 0.7:

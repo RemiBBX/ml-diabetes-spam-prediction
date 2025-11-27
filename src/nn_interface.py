@@ -68,7 +68,7 @@ class MLPModel(LearningModelInterface):
         pred = (probs >= t).astype(int)
         return pred
 
-    def explain(self, X_train: np.ndarray, X_test: np.ndarray, feature_names: list, idx_explain : int, **kwargs):
+    def explain(self, X_train: np.ndarray, X_test: np.ndarray, feature_names: list, idx_explain: int, **kwargs):
         """
         Analyse SHAP pour MLP PyTorch
 
@@ -82,16 +82,16 @@ class MLPModel(LearningModelInterface):
                 - show_plots: Afficher les graphiques (défaut: True)
                 - sample_index: Index de l'échantillon à expliquer localement (défaut: 0) <--- AJOUTÉ
         """
-        import shap
         import matplotlib.pyplot as plt
+        import shap
 
-        max_samples = kwargs.get('max_samples', 200)
-        n_background = kwargs.get('n_background', 100)
-        show_plots = kwargs.get('show_plots', True)
+        max_samples = kwargs.get("max_samples", 200)
+        n_background = kwargs.get("n_background", 100)
+        show_plots = kwargs.get("show_plots", True)
         # 💡 NOUVEAU: Récupérer l'index de l'échantillon pour l'analyse locale
-        sample_index = kwargs.get('sample_index', 0)
+        sample_index = kwargs.get("sample_index", 0)
 
-        print(f"=== Analyse SHAP - MLP PyTorch ===")
+        print("=== Analyse SHAP - MLP PyTorch ===")
 
         # Mode évaluation
         self.model.eval()
@@ -152,8 +152,7 @@ class MLPModel(LearningModelInterface):
 
             # Summary plot Détaillé (Impact des features)
             plt.figure(figsize=(10, 6))
-            shap.summary_plot(shap_values, X_test, feature_names=feature_names,
-                              plot_type="dot", show=False)
+            shap.summary_plot(shap_values, X_test, feature_names=feature_names, plot_type="dot", show=False)
             plt.title("MLP PyTorch - Impact des features")
             plt.tight_layout()
             plt.show()
@@ -164,20 +163,20 @@ class MLPModel(LearningModelInterface):
             # Créer l'objet Explanation pour le WaterFall Plot
             explanation = shap.Explanation(
                 values=shap_values[sample_index],
-                base_values=explainer.expected_value[idx_explain] if isinstance(explainer.expected_value,
-                                                                      np.ndarray) and explainer.expected_value.ndim > 0 else explainer.expected_value,
+                base_values=explainer.expected_value[idx_explain]
+                if isinstance(explainer.expected_value, np.ndarray) and explainer.expected_value.ndim > 0
+                else explainer.expected_value,
                 data=X_test[sample_index],
-                feature_names=feature_names
+                feature_names=feature_names,
             )
 
             plt.figure(figsize=(10, 6))
-            shap.waterfall_plot(explanation, max_display=10,
-                                show=False)  # Affiche les 10 features les plus influentes localement
+            shap.waterfall_plot(
+                explanation, max_display=10, show=False
+            )  # Affiche les 10 features les plus influentes localement
             plt.title(f"MLP PyTorch - Explication Locale pour l'échantillon {sample_index}")
             plt.tight_layout()
             plt.show()
-
-
 
         print("✅ Analyse SHAP MLP terminée")
         return shap_values, explainer

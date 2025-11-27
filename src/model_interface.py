@@ -74,7 +74,4 @@ class LearningModelInterface(ABC):
         plt.show()
 
     def explain(self, X_train: np.ndarray, X_test: np.ndarray, feature_names: list, **kwargs):
-        raise NotImplementedError(
-            f"La méthode explain() n'est pas implémentée pour {self.__class__.__name__}"
-        )
-
+        raise NotImplementedError(f"La méthode explain() n'est pas implémentée pour {self.__class__.__name__}")
