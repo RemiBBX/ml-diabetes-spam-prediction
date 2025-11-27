@@ -1,6 +1,6 @@
 import pandas as pd
 
-from main import detect_binary_and_continuous
+from src import detect_binary_and_continuous
 
 
 def test_detect_binary_and_continuous():
