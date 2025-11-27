@@ -123,11 +123,13 @@ def visualize(data, selected_features, random=False):
     selected_features = list(selected_features)
 
     df["Class"] = df["Class"].to_numpy()
-    if "Class" not in selected_features:
-        selected_features += ["Class"]
-    sns.pairplot(df[selected_features], hue="Class")
-    plt.show()
+    # print("affichage des corrélations 2 à 2")
+    # if "Class" not in selected_features:
+    #     selected_features += ["Class"]
+    # sns.pairplot(df[selected_features], hue="Class")
+    # plt.show()
 
+    print("affichage de la matrice de corrélation")
     # Matrice de corrélation
     corr_matrix = df[feature_names].corr()
     plt.figure(figsize=(8, 6))

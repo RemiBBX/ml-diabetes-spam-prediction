@@ -68,7 +68,7 @@ class MLPModel(LearningModelInterface):
         pred = (probs >= t).astype(int)
         return pred
 
-    def explain(self, X_train: np.ndarray, X_test: np.ndarray, feature_names: list, **kwargs):
+    def explain(self, X_train: np.ndarray, X_test: np.ndarray, feature_names: list, idx_explain : int, **kwargs):
         """
         Analyse SHAP pour MLP PyTorch
 
@@ -143,12 +143,12 @@ class MLPModel(LearningModelInterface):
             # Summary plot - importance
             print("Génération des graphiques...")
 
-            # Summary plot Global (Importance)
-            plt.figure(figsize=(10, 6))
-            shap.summary_plot(shap_values, X_test, feature_names=feature_names, show=False)
-            plt.title("MLP PyTorch - Feature Importance (SHAP)")
-            plt.tight_layout()
-            plt.show()
+            # # Summary plot Global (Importance)
+            # plt.figure(figsize=(10, 6))
+            # shap.summary_plot(shap_values, X_test, feature_names=feature_names, show=False)
+            # plt.title("MLP PyTorch - Feature Importance (SHAP)")
+            # plt.tight_layout()
+            # plt.show()
 
             # Summary plot Détaillé (Impact des features)
             plt.figure(figsize=(10, 6))
@@ -158,13 +158,13 @@ class MLPModel(LearningModelInterface):
             plt.tight_layout()
             plt.show()
 
-            # 💡 NOUVEAU: WaterFall Plot (Explication Locale)
+            # WaterFall Plot (Explication Locale)
             print(f"\nGénération du WaterFall Plot pour l'échantillon {sample_index}...")
 
             # Créer l'objet Explanation pour le WaterFall Plot
             explanation = shap.Explanation(
                 values=shap_values[sample_index],
-                base_values=explainer.expected_value[0] if isinstance(explainer.expected_value,
+                base_values=explainer.expected_value[idx_explain] if isinstance(explainer.expected_value,
                                                                       np.ndarray) and explainer.expected_value.ndim > 0 else explainer.expected_value,
                 data=X_test[sample_index],
                 feature_names=feature_names
